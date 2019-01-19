@@ -5,8 +5,9 @@ import datetime
 
 transaction = Transaction('me', 'you', 100, datetime.datetime.now())
 
-block = Block(None, transaction);
-
+block = Block(None);
+block.addTransaction(transaction);
+block.mineBlock();
 blockChain = BlockChain()
 blockChain.addBlock(block)
 

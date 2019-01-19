@@ -1,10 +1,10 @@
 import hashlib
 import binascii
-try:
-    import sha3
-except:
-    from warnings import warn
-    warn("sha3 is not working!")
+#try:
+#    import sha3
+#except:
+#    from warnings import warn
+#    warn("sha3 is not working!")
 
 
 class MerkleTools(object):
@@ -71,6 +71,7 @@ class MerkleTools(object):
             while len(self.levels[0]) > 1:
                 self._calculate_next_level()
         self.is_ready = True
+        return self;
 
     def get_merkle_root(self):
         if self.is_ready:
