@@ -14,17 +14,17 @@ blockChain = BlockChain()
 
 block1 = Block(None);
 block1.addTransaction(transaction);
-block1.mineBlock(privateKey);
+block1.mine(privateKey);
 blockChain.addBlock(block1)
 
 block2 = Block(block1.blockHash);
 block2.addTransaction(transaction);
-block2.mineBlock(privateKey);
+block2.mine(privateKey);
 blockChain.addBlock(block2)
 
 block3 = Block(block2.blockHash);
 block3.addTransaction(transaction);
-block3.mineBlock(privateKey);
+block3.mine(privateKey);
 blockChain.addBlock(block3)
 
 print(blockChain.printContent())

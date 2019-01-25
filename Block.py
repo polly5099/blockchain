@@ -32,7 +32,7 @@ class Block(object):
         #hashString = self.workBlock()
         #self.id = self.workBlock() #sha256(hashString.encode('utf-8')).hexdigest()
 
-    def mineBlock(self, privateKey):
+    def mine(self, privateKey):
         counter = 0;
         rootHash = self.merkleTree.make_tree().get_merkle_root();
 
@@ -42,9 +42,10 @@ class Block(object):
             blockHash = self.signData(serializedData.encode('utf-8'), privateKey);
             #blockId = sha256(serializedData.encode('utf-8')).hexdigest()
             ++counter
-            print(str(blockHash))
+            #print(str(blockHash))
             if (blockHash.startswith('000')):
                 self.blockHash = blockHash
+                print(blockHash)
                 break
 
         return blockHash
@@ -67,8 +68,11 @@ class Block(object):
             ),
             hashes.SHA256()
         )
-        print(signature)
-        print(type(signature))
+        #print(signature)
+        #print(type(signature))
+        #print('flat decode', type(signature.hex()))
+        #print('binascii', type(binascii.hexlify(signature)))
+        #print(signature.decode('utf-8', 'ignore'))
         #publicKey = privateKey.public_key()
         #publicKey.verify(
         #    signature,
@@ -80,7 +84,7 @@ class Block(object):
         #    hashes.SHA256()
         #)
 
-        return signature
+        return signature.hex()
 
     def addTransaction(self, transaction: Transaction):
         self.transactions.append(transaction);
