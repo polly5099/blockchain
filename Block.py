@@ -18,6 +18,7 @@ class Block(object):
     currentDate = None
     previousBlockHash = None
     nextBlock = None
+    publicKey = None
     transactions = []
     nonce = None
 
@@ -32,26 +33,40 @@ class Block(object):
         #hashString = self.workBlock()
         #self.id = self.workBlock() #sha256(hashString.encode('utf-8')).hexdigest()
 
-    def mine(self, privateKey):
+    def mine(self, privateKey, publicKey):
         counter = 0;
-        rootHash = self.merkleTree.make_tree().get_merkle_root();
+        rootHash = self.getBlockHash()
+        self.publicKey = publicKey
 
         while True:
-            nonce = random.getrandbits(64)
-            serializedData = self.serializeData(rootHash, nonce);
+            self.nonce = random.getrandbits(64)
+            serializedData = self.serialize(rootHash);
             blockHash = self.signData(serializedData.encode('utf-8'), privateKey);
             #blockId = sha256(serializedData.encode('utf-8')).hexdigest()
             ++counter
             #print(str(blockHash))
-            if (blockHash.startswith('000')):
+            if (blockHash.startswith('00')):
                 self.blockHash = blockHash
-                print(blockHash)
                 break
 
         return blockHash
 
-    def serializeData(self, rootHash, nonce):
-        return (self.previousBlockHash if self.previousBlockHash is not None else sha256(b'').hexdigest()) + rootHash + str(self.currentDate) + str(nonce);
+    def serialize(self, rootHash):
+        return (self.previousBlockHash if self.previousBlockHash is not None else sha256(b'').hexdigest()) + rootHash + str(self.currentDate) + str(self.nonce) + str(self.publicKey);
+
+    def getBlockHash(self):
+        return self.merkleTree.make_tree().get_merkle_root();
+
+    def verify(self):
+        return self.publicKey.verify(
+            bytes.fromhex(self.blockHash),
+            self.serialize(self.getBlockHash()).encode('utf-8'),
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA256()),
+                salt_length=padding.PSS.MAX_LENGTH
+            ),
+            hashes.SHA256()
+        )
 
     def signData(self, message, privateKey):
         #key = 'CCB45087D6527D1E478C33EE9D0C729DF677202C7E50114B58D4163BF42687F9'
